@@ -132,6 +132,7 @@ export default {
           if (response.status === 200) {
             // 将成功响应放入缓存
             await cache.put(cacheKey, response.clone());
+            return response;
           } else {
             return new Response("Resource Not Found", { status: 404 });
           }
