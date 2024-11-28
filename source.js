@@ -179,7 +179,7 @@ export default {
       // 静态资源处理
       if (url.pathname.startsWith("/assets/")) {
         try {
-          return fetch(request);
+          return await window.fetch(request);
         } catch (err) {
           // 文件不存在，返回 404
           return new Response("Resource Not Found", { status: 404 });
