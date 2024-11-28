@@ -177,19 +177,9 @@ export default {
 
     if (!(token == userToken || token == generatedToken || url.pathname == ("/" + userToken) || url.pathname.includes("/" + userToken + "?"))) {
       // 静态资源处理
-      if (url.pathname.startsWith("/assets")) {
+      if (url.pathname.startsWith("/assets/")) {
         try {
-          // 获取资源路径
-          const assetPath = new URL(`.${url.pathname}`, `file://${__dirname}`).pathname;
-
-          // 读取文件内容
-          const fileContent = await fs.promises.readFile(assetPath);
-
-          // 根据文件类型返回正确的 Content-Type
-          const contentType = getContentType(assetPath);
-          return new Response(fileContent, {
-            headers: { "Content-Type": contentType },
-          });
+          return fetch(request);
         } catch (err) {
           // 文件不存在，返回 404
           return new Response("Resource Not Found", { status: 404 });
