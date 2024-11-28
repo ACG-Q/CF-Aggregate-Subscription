@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm install html-minifier
-        npm install terser
+        npm install uglify-js
 
     - name: Process JavaScript file
       run: node .github/tools/processJs.js
