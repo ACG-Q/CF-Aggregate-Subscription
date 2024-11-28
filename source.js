@@ -115,6 +115,10 @@ async function isAuthenticated(request, env) {
 
 export default {
   async fetch(request, env) {
+    // 解析请求的 URL 和 token
+    const url = new URL(request.url);
+    const token = url.searchParams.get('token');
+
     // 静态资源处理
     if (url.pathname.startsWith("/assets/")) {
       const cacheKey = new Request(url.toString(), request);
@@ -144,9 +148,6 @@ export default {
     const userAgentHeader = request.headers.get('User-Agent');
     const userAgent = userAgentHeader ? userAgentHeader.toLowerCase() : "null";
 
-    // 解析请求的 URL 和 token
-    const url = new URL(request.url);
-    const token = url.searchParams.get('token');
 
     // 获取KV
     const kv = env.CONFIG_KV
