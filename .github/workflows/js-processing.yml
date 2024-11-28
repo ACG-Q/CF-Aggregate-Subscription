@@ -1,0 +1,31 @@
+name: Process JavaScript File
+
+on: [push]
+
+jobs:
+  process-js:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install html-minifier
+
+    - name: Process JavaScript file
+      run: node processJs.js
+
+    - name: Commit and push changes using GitHub Bot
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add work.js
+        git commit -m "Process and minify JavaScript file"
+        git push
