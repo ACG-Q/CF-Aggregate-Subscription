@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { minify } = require('html-minifier');
+const terser = require('terser');
 
 // 读取原始文件
 let content;
@@ -53,9 +54,19 @@ const withMinifiedHTML = obfuscated.replace(/return new Response\(`([\s\S]*?)`,/
   }
 });
 
+
+// 压缩 JavaScript
+let minifiedJS;
+try {
+  minifiedJS = terser.minify(withMinifiedHTML).code;
+} catch (error) {
+  console.error('JavaScript 压缩失败:', error.message);
+  process.exit(1);
+}
+
 // 写入新的文件
 try {
-  fs.writeFileSync('work.js', withMinifiedHTML);
+  fs.writeFileSync('work.js', minifiedJS);
   console.log('文件处理完成并保存为 work.js');
 } catch (error) {
   console.error('写入文件失败:', error.message);

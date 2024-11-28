@@ -15,7 +15,9 @@ jobs:
         node-version: '16'
 
     - name: Install dependencies
-      run: npm install html-minifier
+      run: |
+        npm install html-minifier
+        npm install terser
 
     - name: Process JavaScript file
       run: node .github/tools/processJs.js
