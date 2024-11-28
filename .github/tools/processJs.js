@@ -68,8 +68,8 @@ function writeFile(outputFilePath, content) {
 function processFile(inputFilePath, outputFilePath, variableMap) {
   const content = readFile(inputFilePath);
   const obfuscated = obfuscateVariables(content, variableMap);
-  const minifiedJS = minifyJS(obfuscated);
-  const withMinifiedHTML = minifyHTML(minifiedJS);
+  const withMinifiedHTML = minifyHTML(obfuscated);
+  const minifiedJS = minifyJS(withMinifiedHTML);
   writeFile(outputFilePath, minifiedJS);
 }
 
