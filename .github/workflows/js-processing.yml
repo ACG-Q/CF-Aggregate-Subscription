@@ -18,7 +18,7 @@ jobs:
       run: npm install html-minifier
 
     - name: Process JavaScript file
-      run: node processJs.js
+      run: node .github/tools/processJs.js
 
     - name: Commit and push changes using GitHub Bot
       env:
