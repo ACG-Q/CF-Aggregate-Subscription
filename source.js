@@ -27,7 +27,7 @@ let subscriptionConverterAPI = "SUBAPI.fxxk.dedyn.io"; //在线订阅转换后�
 let subscriptionConfigURL = "https://raw.githubusercontent.com/cmliu/ACL4SSR/main/Clash/config/ACL4SSR_Online_MultiCountry.ini"; //订阅配置文件
 let converterProtocol = 'https'; // 订阅转换服务协议（http 或 https）
 
-function log(obj){
+function log(obj) {
   return new Response(JSON.stringify(obj), {
     status: 200,
   })
@@ -82,7 +82,7 @@ async function verifyToken(token, secret) {
 function parseCookies(cookieHeader) {
   const cookies = {};
   if (!cookieHeader) return cookies;
-  
+
   cookieHeader.split(";").forEach((cookie) => {
     const [key, value] = cookie.split("=").map((v) => v.trim());
     cookies[key] = value;
@@ -115,6 +115,31 @@ async function isAuthenticated(request, env) {
 
 export default {
   async fetch(request, env) {
+    // 静态资源处理
+    if (url.pathname.startsWith("/assets/")) {
+      const cacheKey = new Request(url.toString(), request);
+      const cache = caches.default;
+    
+      // 尝试从缓存中获取
+      let response = await cache.match(cacheKey);
+      if (!response) {
+        try {
+          response = await fetch(request);
+          if (response.status === 200) {
+            // 将成功响应放入缓存
+            await cache.put(cacheKey, response.clone());
+          } else {
+            return new Response("Resource Not Found", { status: 404 });
+          }
+        } catch (err) {
+          console.error("Error fetching asset:", err);
+          return new Response("Internal Server Error", { status: 500 });
+        }
+      }
+    
+      return response;
+    }
+
     // 获取请求头中的 User-Agent 信息并进行小写化处理
     const userAgentHeader = request.headers.get('User-Agent');
     const userAgent = userAgentHeader ? userAgentHeader.toLowerCase() : "null";
@@ -176,16 +201,6 @@ export default {
     subscriptionLinks = await parseLinks(subscriptionLinksStr);
 
     if (!(token == userToken || token == generatedToken || url.pathname == ("/" + userToken) || url.pathname.includes("/" + userToken + "?"))) {
-      // 静态资源处理
-      if (url.pathname.startsWith("/assets/")) {
-        try {
-          return await fetch(request);
-        } catch (err) {
-          // 文件不存在，返回 404
-          return new Response("Resource Not Found", { status: 404 });
-        }
-      }
-
       // 处理登录请求
       if (url.pathname === "/login" && request.method === "POST") {
         return await handleLogin(request, env);
@@ -1367,30 +1382,30 @@ async function renderNginxPage() {
 
 // 登录api
 async function handleLogin(request, env) {
-    const { password } = await request.json();
+  const { password } = await request.json();
 
-    if (password === env.PWD) {
-      const maxAge = 3600; // 1小时
-      const expires = new Date(Date.now() + maxAge * 1000).toUTCString();
-  
-      // 生成加密 Token
-      const tokenPayload = `${Date.now()}`; // 使用时间戳作为有效负载
-      const token = await generateToken(tokenPayload, env.SECRET);
+  if (password === env.PWD) {
+    const maxAge = 3600; // 1小时
+    const expires = new Date(Date.now() + maxAge * 1000).toUTCString();
 
-      // return log({password, isok: password === env.PWD, token})
-  
-      return new Response("登录成功！", {
-        status: 200,
-        headers: {
-          "Set-Cookie": `auth=${token}; Expires=${expires}; Max-Age=${maxAge}; HttpOnly; Secure; Path=/`,
-          "Content-Type": "application/json",
-        },
-      });
-    } else {
-      return new Response("密码错误！", { status: 401, headers: { "Content-Type": "text/plain" } });
-    }
+    // 生成加密 Token
+    const tokenPayload = `${Date.now()}`; // 使用时间戳作为有效负载
+    const token = await generateToken(tokenPayload, env.SECRET);
+
+    // return log({password, isok: password === env.PWD, token})
+
+    return new Response("登录成功！", {
+      status: 200,
+      headers: {
+        "Set-Cookie": `auth=${token}; Expires=${expires}; Max-Age=${maxAge}; HttpOnly; Secure; Path=/`,
+        "Content-Type": "application/json",
+      },
+    });
+  } else {
+    return new Response("密码错误！", { status: 401, headers: { "Content-Type": "text/plain" } });
   }
-  
+}
+
 
 
 // 处理 API 请求
