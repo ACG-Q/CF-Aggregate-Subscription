@@ -120,30 +120,30 @@ export default {
     const token = url.searchParams.get('token');
 
     // 静态资源处理
-    if (url.pathname.startsWith("/assets/")) {
-      const cacheKey = new Request(url.toString(), request);
-      const cache = caches.default;
+    // if (url.pathname.startsWith("/assets/")) {
+    //   const cacheKey = new Request(url.toString(), request);
+    //   const cache = caches.default;
     
-      // 尝试从缓存中获取
-      let response = await cache.match(cacheKey);
-      if (!response) {
-        try {
-          response = await fetch(request);
-          if (response.status === 200) {
-            // 将成功响应放入缓存
-            await cache.put(cacheKey, response.clone());
-            return response;
-          } else {
-            return new Response("Resource Not Found", { status: 404 });
-          }
-        } catch (err) {
-          console.error("Error fetching asset:", err);
-          return new Response("Internal Server Error", { status: 500 });
-        }
-      }
+    //   // 尝试从缓存中获取
+    //   let response = await cache.match(cacheKey);
+    //   if (!response) {
+    //     try {
+    //       response = await fetch(request);
+    //       if (response.status === 200) {
+    //         // 将成功响应放入缓存
+    //         await cache.put(cacheKey, response.clone());
+    //         return response;
+    //       } else {
+    //         return new Response("Resource Not Found", { status: 404 });
+    //       }
+    //     } catch (err) {
+    //       console.error("Error fetching asset:", err);
+    //       return new Response("Internal Server Error", { status: 500 });
+    //     }
+    //   }
     
-      return response;
-    }
+    //   return response;
+    // }
 
     // 获取请求头中的 User-Agent 信息并进行小写化处理
     const userAgentHeader = request.headers.get('User-Agent');
@@ -264,6 +264,7 @@ export default {
       // 构造请求订阅的响应内容
       let requestData = aggregatedSubscriptionData;
       let appendUA = 'v2rayn';
+      console.log("请求方: ", url.searchParams)
       if (url.searchParams.has('clash')) appendUA = 'clash';
       else if (url.searchParams.has('singbox')) appendUA = 'singbox';
       else if (url.searchParams.has('surge')) appendUA = 'surge';
@@ -638,7 +639,7 @@ async function getSubscriptionData(apiUrls, request, appendUA, userAgentHeader) 
 async function getUrl(request, targetUrl, appendUA, userAgentHeader) {
   // 设置自定义 User-Agent
   const newHeaders = new Headers(request.headers);
-  newHeaders.set("User-Agent", `v2rayN/${appendUA} cmliu/CF-Workers-SUB ${userAgentHeader}`);
+  newHeaders.set("User-Agent", `v2rayN/${appendUA} ${userAgentHeader}`);
 
   // 构建新的请求对象
   const modifiedRequest = new Request(targetUrl, {
@@ -1393,8 +1394,6 @@ async function handleLogin(request, env) {
     // 生成加密 Token
     const tokenPayload = `${Date.now()}`; // 使用时间戳作为有效负载
     const token = await generateToken(tokenPayload, env.SECRET);
-
-    // return log({password, isok: password === env.PWD, token})
 
     return new Response("登录成功！", {
       status: 200,
