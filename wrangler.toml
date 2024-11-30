@@ -1,0 +1,17 @@
+name = "cf-aggregate-subscription"
+main = "src/_worker.js"
+compatibility_date = "2024-11-27"
+workers_dev = true
+preview_urls = false
+assets = { directory = "./public/assets", binding = "ASSETS", html_handling = "force-trailing-slash", not_found_handling = "404-page" }
+
+[[kv_namespaces]]
+id = "ce28edb45add44bf949b9710d7766b42"
+binding = "CONFIG_KV"
+
+[vars]
+PWD = "9527"
+SECRET = "1b639267-8435-464d-89b3-ff75ce6e27ce"
+
+[observability]
+enabled = true

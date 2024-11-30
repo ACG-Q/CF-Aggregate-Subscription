@@ -91,4 +91,4 @@ const variableMap = {
 };
 
 // 调用主函数
-processFile('source.js', '_worker.js', variableMap);
+processFile('src/source.js', 'src/_worker.js', variableMap);
