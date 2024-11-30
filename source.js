@@ -308,31 +308,30 @@ export default {
         });
       } else {
         // 转换为目标格式（Clash, Singbox等）
-        let conversionURL;
         switch (subscriptionFormat) {
           case 'clash':
-            conversionURL = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=clash&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
+            subconverterUrl = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=clash&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
             break;
           case 'singbox':
-            conversionURL = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=singbox&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
+            subconverterUrl = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=singbox&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
             break;
           case 'surge':
-            conversionURL = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=surge&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
+            subconverterUrl = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=surge&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&new_name=true`;
             break;
           case 'quanx':
-            conversionURL = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=quanx&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&udp=true`;
+            subconverterUrl = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=quanx&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false&udp=true`;
             break;
           case 'loon':
-            conversionURL = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=loon&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false`;
+            subconverterUrl = `${converterProtocol}://${subscriptionConverterAPI}/sub?target=loon&url=${encodeURIComponent(subscriptionConversionURL)}&insert=false&config=${encodeURIComponent(subscriptionConfigURL)}&emoji=true&list=false&tfo=false&scv=true&fdn=false&sort=false`;
             break;
           default:
-            conversionURL = subscriptionConversionURL;
+            subconverterUrl = subscriptionConversionURL;
         }
       }
 
 
       try {
-        const subconverterResponse = await fetch(subconverterUrl);
+        const subconverterResponse = await fetch(conversionURL);
 
         if (!subconverterResponse.ok) {
           return new Response(base64Data, {
