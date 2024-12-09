@@ -235,20 +235,24 @@ export default {
 			// 构造请求订阅的响应内容
 			let requestData = aggregatedSubscriptionData;
 			let appendUA = 'v2rayn';
-			console.log('请求方: ', url.searchParams);
 			if (url.searchParams.has('clash')) appendUA = 'clash';
 			else if (url.searchParams.has('singbox')) appendUA = 'singbox';
 			else if (url.searchParams.has('surge')) appendUA = 'surge';
 			else if (url.searchParams.has('quanx')) appendUA = 'Quantumult%20X';
 			else if (url.searchParams.has('loon')) appendUA = 'Loon';
 
-			const subscriptionResponse = await getSubscriptionData(subscriptionLinks, request, appendUA, userAgentHeader);
-			requestData += subscriptionResponse[0].join('\n');
-			subscriptionConversionURL += '|' + subscriptionResponse[1];
 
-			if (variables.WARP) {
-				subscriptionConversionURL += '|' + (await parseLinks(variables.WARP)).join('|');
-			}
+      if(subscriptionLinks.length > 0){
+        const subscriptionResponse = await getSubscriptionData(subscriptionLinks, request, appendUA, userAgentHeader);
+        requestData += subscriptionResponse[0].join('\n');
+        subscriptionConversionURL += '|' + subscriptionResponse[1];
+      }
+
+      if (variables.WARP) {
+        subscriptionConversionURL += '|' + (await parseLinks(variables.WARP)).join('|');
+      }
+
+			
 
 			// 修复中文错误并处理编码
 			const utf8Encoder = new TextEncoder();
@@ -320,6 +324,7 @@ export default {
 			}
 
 			try {
+        console.log("subconverterUrl", subconverterUrl)
 				const subconverterResponse = await fetch(subconverterUrl);
 
 				if (!subconverterResponse.ok) {

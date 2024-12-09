@@ -22,6 +22,7 @@ jobs:
       run: |
         npx wrangler deploy src/source.js --name cf-aggregate-subscription --compatibility-flag [nodejs_compat] --compatibility-date 2024-10-26 --dry-run --outdir=dist
         npx javascript-obfuscator dist/source.js --output _worker.js
+        npx javascript-obfuscator dist/source.js --output src/_worker.js
 
     - name: Commit and push changes using GitHub Bot
       env:
@@ -30,5 +31,6 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add _worker.js
+        git add src/_worker.js
         git commit -m "Process and minify JavaScript file"
         git push
